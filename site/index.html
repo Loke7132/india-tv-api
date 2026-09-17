@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>India TV API</title>
+  <style>
+    :root { color-scheme: light dark; font: 16px/1.55 system-ui, sans-serif; }
+    body { max-width: 780px; margin: 0 auto; padding: 3rem 1.25rem; }
+    h1 { margin-bottom: .25rem; }
+    .muted { opacity: .72; }
+    .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 1rem; margin: 2rem 0; }
+    article { border: 1px solid #8886; border-radius: 12px; padding: 1rem; }
+    article strong { display: block; font-size: 1.8rem; }
+    a { color: #ff7a18; }
+    li { margin: .55rem 0; }
+    code { overflow-wrap: anywhere; }
+  </style>
+</head>
+<body>
+  <h1>India TV API</h1>
+  <p class="muted">Indian and India-targeted channel metadata, with dedicated Tamil and Telugu endpoints.</p>
+  <section class="cards" id="stats"><article>Loading current build statistics…</article></section>
+  <h2>JSON</h2>
+  <ul>
+    <li><a href="api/channels.json">All catalogued channels</a></li>
+    <li><a href="api/languages/tamil.json">Tamil catalog</a></li>
+    <li><a href="api/languages/telugu.json">Telugu catalog</a></li>
+    <li><a href="api/languages/malayalam.json">Malayalam catalog</a></li>
+    <li><a href="api/languages/kannada.json">Kannada catalog</a></li>
+    <li><a href="api/streams.json">Playable streams</a></li>
+    <li><a href="api/feeds.json">Regional and language feeds</a></li>
+    <li><a href="api/logos.json">Logos</a></li>
+    <li><a href="api/guides.json">EPG mappings</a></li>
+  </ul>
+  <h2>M3U playlists</h2>
+  <ul>
+    <li><a href="playlists/india.m3u">India</a></li>
+    <li><a href="playlists/tamil.m3u">Tamil</a></li>
+    <li><a href="playlists/telugu.m3u">Telugu</a></li>
+    <li><a href="playlists/malayalam.m3u">Malayalam</a></li>
+    <li><a href="playlists/kannada.m3u">Kannada</a></li>
+  </ul>
+  <p class="muted">The catalog includes unavailable channels. Playlists only contain indexed public streams and may be geo-restricted. This site does not host video.</p>
+  <script>
+    fetch('api/stats.json').then(r => r.json()).then(s => {
+      const cards = [
+        ['Channels', s.channels],
+        ['Streams', s.streams],
+        ['Tamil feeds', s.languages.tamil.feeds],
+        ['Telugu feeds', s.languages.telugu.feeds]
+      ]
+      document.querySelector('#stats').innerHTML = cards.map(([label, value]) =>
+        `<article><strong>${value.toLocaleString()}</strong>${label}</article>`
+      ).join('')
+    })
+  </script>
+</body>
+</html>
