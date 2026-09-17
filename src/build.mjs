@@ -102,7 +102,6 @@ await Promise.all([
   write('playlists/telugu.m3u', createPlaylist(result.streams, 'tel')),
   write('playlists/malayalam.m3u', createPlaylist(result.streams, 'mal')),
   write('playlists/kannada.m3u', createPlaylist(result.streams, 'kan')),
-  write('index.html', await readFile(join(root, 'site/index.html'), 'utf8')),
   write('.nojekyll', '')
 ])
 

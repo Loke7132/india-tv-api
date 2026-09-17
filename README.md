@@ -1,7 +1,7 @@
 # India TV API
 
-An India-first, static TV metadata API with dedicated Tamil, Telugu, Malayalam,
-and Kannada JSON and M3U endpoints. It joins the public datasets maintained by
+An India-first React live-TV player and static API with dedicated Tamil,
+Telugu, Malayalam, and Kannada JSON and M3U endpoints. It joins the public datasets maintained by
 [iptv-org](https://github.com/iptv-org) instead of treating the India playlist
 as a single flat file.
 
@@ -18,6 +18,11 @@ free or legal public stream exists.
 ## Generated endpoints
 
 After deployment, replace `<username>` and `<repository>` below:
+
+The project root is a browser-based player with channel search, language and
+category filters, favorites, alternate sources, and HLS playback. Browser
+security may prevent HTTP, geo-restricted, header-dependent, or non-CORS
+streams from playing; those may still work in VLC.
 
 | Endpoint | Path |
 | --- | --- |

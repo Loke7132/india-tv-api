@@ -3,11 +3,23 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "description": "India-first TV metadata API and public-stream playlists, with dedicated Tamil and Telugu endpoints.",
+  "description": "India-first React TV player, metadata API, and public-stream playlists.",
   "scripts": {
-    "build": "node src/build.mjs",
+    "build": "npm run build:web && npm run build:data",
+    "build:data": "node src/build.mjs",
+    "build:web": "vite build",
+    "dev": "vite",
     "test": "node --test",
     "check": "npm test && npm run build"
+  },
+  "dependencies": {
+    "hls.js": "^1.6.13",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^5.0.2",
+    "vite": "^7.1.5"
   },
   "engines": {
     "node": ">=20"
