@@ -3,3 +3,8 @@ node_modules/
 public/
 coverage/
 *.log
+backend/.env
+backend/.venv/
+backend/.pytest_cache/
+backend/**/__pycache__/
+backend/**/*.pyc

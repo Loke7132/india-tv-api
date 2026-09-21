@@ -1,0 +1,1 @@
+"""Authorized IPTV proxy service."""
