@@ -24,12 +24,6 @@ category filters, favorites, alternate sources, and HLS playback. Browser
 security may prevent HTTP, geo-restricted, header-dependent, or non-CORS
 streams from playing; those may still work in VLC.
 
-Tamil and Telugu browser playback is connected to the HTTPS Azure relay by
-default. The frontend fetches its browser-safe playlist from
-`https://india-tv-proxy.graygrass-63d87833.centralindia.azurecontainerapps.io/web/playlist.m3u`.
-Set `VITE_PROXY_PLAYLIST_URL` at build time to use another deployment. The
-Python/FastAPI service and its tests are in [`backend/`](backend/README.md).
-
 | Endpoint | Path |
 | --- | --- |
 | Full catalog | `https://<username>.github.io/<repository>/api/channels.json` |
@@ -47,10 +41,10 @@ Python/FastAPI service and its tests are in [`backend/`](backend/README.md).
 
 ## Build locally
 
-Node.js 20 or newer is required. Install the locked package dependencies first.
+Node.js 20 or newer is the only requirement. There are no package
+dependencies.
 
 ```sh
-npm ci
 npm test
 npm run build
 ```
@@ -85,9 +79,7 @@ The scheduled workflow refreshes the generated API every day.
 
 ## Important limitation
 
-This project indexes links and does not store video. Its optional Azure service
-relays public stream responses so browser clients can use HTTPS and CORS.
-Availability and geographic restrictions belong to each broadcaster. Inclusion
-in an upstream public dataset is not a guarantee that a stream is online or
-authorized in every jurisdiction. Remove a disputed link and contact its host
-or upstream source.
+This project indexes links; it does not host or rebroadcast video. Availability
+and geographic restrictions belong to each broadcaster. Inclusion in an
+upstream public dataset is not a guarantee that a stream is authorized in every
+jurisdiction. Remove a disputed link and contact its host or upstream source.
