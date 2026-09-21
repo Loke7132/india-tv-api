@@ -4,16 +4,30 @@ import test from 'node:test'
 import { connectProxyStreams, parseProxyPlaylist } from '../web/src/proxy.mjs'
 
 const playlist = `#EXTM3U
-#EXTINF:-1 tvg-id="SunGemini.in@SD" group-title="General",Sun Gemini
+#EXTINF:-1 tvg-id="SunGemini.in@SD" tvg-logo="https://img.example/gemini.png" tvg-language="tel" group-title="General",Sun Gemini
 https://proxy.example/stream?token=one
-#EXTINF:-1 tvg-id="Other.in@SD" group-title="News",Other
+#EXTINF:-1 tvg-id="Other.in@SD" tvg-language="hin" group-title="News",Other
 https://proxy.example/stream?token=two
 `
 
 test('parseProxyPlaylist reads ids, titles, and URLs', () => {
   assert.deepEqual(parseProxyPlaylist(playlist), [
-    { id: 'SunGemini.in@SD', title: 'Sun Gemini', url: 'https://proxy.example/stream?token=one' },
-    { id: 'Other.in@SD', title: 'Other', url: 'https://proxy.example/stream?token=two' }
+    {
+      id: 'SunGemini.in@SD',
+      title: 'Sun Gemini',
+      logo: 'https://img.example/gemini.png',
+      languages: ['tel'],
+      categories: ['General'],
+      url: 'https://proxy.example/stream?token=one'
+    },
+    {
+      id: 'Other.in@SD',
+      title: 'Other',
+      logo: '',
+      languages: ['hin'],
+      categories: ['News'],
+      url: 'https://proxy.example/stream?token=two'
+    }
   ])
 })
 
@@ -40,4 +54,27 @@ test('connectProxyStreams replaces Tamil and Telugu URLs without exposing the so
   assert.equal(connected[0].source_url, streams[0].url)
   assert.equal(connected[0].proxied, true)
   assert.equal(connected[1], streams[1])
+})
+
+test('connectProxyStreams includes Tamil and Telugu channels missing from the static catalog', () => {
+  const proxyOnlyPlaylist = `#EXTM3U
+#EXTINF:-1 tvg-id="ProxyOnly.in@HD" tvg-logo="https://img.example/proxy-only.png" tvg-language="tam" group-title="Movies",Proxy Only (1080p)
+https://proxy.example/stream?token=proxy-only
+`
+
+  const connected = connectProxyStreams([], proxyOnlyPlaylist)
+
+  assert.deepEqual(connected, [{
+    channel: 'ProxyOnly.in',
+    feed: 'HD',
+    title: 'Proxy Only (1080p)',
+    channel_name: 'Proxy Only',
+    url: 'https://proxy.example/stream?token=proxy-only',
+    source_url: null,
+    quality: '1080p',
+    languages: ['tam'],
+    categories: ['Movies'],
+    logo: 'https://img.example/proxy-only.png',
+    proxied: true
+  }])
 })
