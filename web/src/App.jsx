@@ -1,6 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { connectProxyStreams } from './proxy.mjs'
 
 const BASE = import.meta.env.BASE_URL
+const PROXY_PLAYLIST_URL = import.meta.env.VITE_PROXY_PLAYLIST_URL ||
+  'https://india-tv-proxy.graygrass-63d87833.centralindia.azurecontainerapps.io/web/playlist.m3u'
 
 const languages = [
   { code: 'all', label: 'All India' },
@@ -209,6 +212,7 @@ export default function App() {
   const [stats, setStats] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [proxyConnected, setProxyConnected] = useState(false)
   const [language, setLanguage] = useState('all')
   const [category, setCategory] = useState('all')
   const [query, setQuery] = useState('')
@@ -222,11 +226,18 @@ export default function App() {
         if (!response.ok) throw new Error('Could not load the channel API.')
         return response.json()
       }),
-      fetch(`${BASE}api/stats.json`).then(response => response.json())
+      fetch(`${BASE}api/stats.json`).then(response => response.json()),
+      fetch(PROXY_PLAYLIST_URL)
+        .then(response => {
+          if (!response.ok) throw new Error('Azure stream relay is unavailable.')
+          return response.text()
+        })
+        .catch(() => '')
     ])
-      .then(([streamData, statsData]) => {
-        setStreams(streamData)
+      .then(([streamData, statsData, proxyPlaylist]) => {
+        setStreams(proxyPlaylist ? connectProxyStreams(streamData, proxyPlaylist) : streamData)
         setStats(statsData)
+        setProxyConnected(Boolean(proxyPlaylist))
       })
       .catch(cause => setError(cause.message))
       .finally(() => setLoading(false))
@@ -278,7 +289,7 @@ export default function App() {
             <div>
               <span className="eyebrow">Free public streams · India</span>
               <h1>Your channels.<br /><em>Your languages.</em></h1>
-              <p>Browse live Tamil, Telugu, Malayalam, Kannada, and nationwide television in one clean player.</p>
+              <p>Browse live Tamil, Telugu, Malayalam, Kannada, and nationwide television in one clean player. {proxyConnected ? 'Tamil and Telugu playback is connected through the Azure relay.' : ''}</p>
             </div>
             <div className="hero-stat">
               <strong>{channels.length || '—'}</strong>
@@ -327,7 +338,7 @@ export default function App() {
 
       <footer>
         <div className="brand"><span className="brand-mark"><Icon name="tv" /></span><span>Bharat <strong>TV</strong></span></div>
-        <p>This site indexes public streams and does not host video. Some sources may be offline, geo-restricted, or incompatible with browser playback.</p>
+        <p>This site indexes public streams. Tamil and Telugu playback may be relayed through the Azure backend; availability and regional restrictions still belong to each broadcaster.</p>
         <div>
           <a href={`${BASE}api/streams.json`}>JSON API</a>
           <a href={`${BASE}playlists/tamil.m3u`}>Tamil M3U</a>
